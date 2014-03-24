@@ -1,6 +1,6 @@
 require 'config'
 local match = string.match
-local ngxmatch=ngx.re.match
+local ngxmatch=ngx.re.find
 local unescape=ngx.unescape_uri
 local get_headers = ngx.req.get_headers
 local optionIsOn = function (options) return options == "on" and true or false end
@@ -87,6 +87,22 @@ function whiteurl()
         end
     end
     return false
+end
+
+function fileExtCheck(ext)
+    local items = Set(fileExtension)
+    if ext then
+        if not items[ext] then
+			log('POST',ngx.var.request_uri,"-","file attack with ext "..ext)
+            say_html()
+        end
+    end
+    return false
+end
+function Set (list)
+  local set = {}
+  for _, l in ipairs(list) do set[l] = true end
+  return set
 end
 
 function args()
